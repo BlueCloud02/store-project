@@ -27,7 +27,7 @@ class Product
     private $reference;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
      */
     private $saleNoticeDate;
 
@@ -35,6 +35,12 @@ class Product
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
     private $price;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Brand", inversedBy="products")
+     * @ORM\JoinColumn(name="brand", referencedColumnName="brand_id", nullable=false)
+     */
+    private $brand;
 
     public function getId(): ?int
     {
@@ -85,6 +91,18 @@ class Product
     public function setPrice($price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getBrand(): ?Brand
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?Brand $brand): self
+    {
+        $this->brand = $brand;
 
         return $this;
     }

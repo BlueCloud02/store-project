@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190307191653 extends AbstractMigration
+final class Version20190309064818 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,8 +22,8 @@ final class Version20190307191653 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE brand (brand_id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(brand_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE product (product_id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, reference VARCHAR(10) NOT NULL, sale_notice_date DATETIME NOT NULL, price NUMERIC(10, 2) NOT NULL, UNIQUE INDEX UNIQ_D34A04ADAEA34913 (reference), PRIMARY KEY(product_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE product ADD CONSTRAINT FK_D34A04AD1C52F958 FOREIGN KEY (brand) REFERENCES brand (brand_id)');
+        $this->addSql('CREATE INDEX IDX_D34A04AD1C52F958 ON product (brand)');
     }
 
     public function down(Schema $schema) : void
@@ -31,7 +31,7 @@ final class Version20190307191653 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP TABLE brand');
-        $this->addSql('DROP TABLE product');
+        $this->addSql('ALTER TABLE product DROP FOREIGN KEY FK_D34A04AD1C52F958');
+        $this->addSql('DROP INDEX IDX_D34A04AD1C52F958 ON product');
     }
 }
