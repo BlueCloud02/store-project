@@ -19,32 +19,43 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    // /**
-    //  * @return Product[] Returns an array of Product objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function filterProducts(?string $search, ?array $brandsIds, ?string $saleNoticeDate, ?int $maxPrice)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $qb = $this->createQueryBuilder('product');
+        $qb->select('product as productEntity');
+        
+        // If some brands are selected 
+        if($brandsIds){
+            $qb->leftJoin('product.brand', 'brand')
+                ->where('brand.id IN (:ids)')
+                ->setParameter('ids', $brandsIds);
+        }
 
-    /*
-    public function findOneBySomeField($value): ?Product
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        // If search bar is not empty
+        if ($search) {
+            if($search[0]=='#'){ // if search string begins by a "#", it means that the search is a reference
+                $qb->andWhere('product.reference LIKE :search');
+            } else {
+                $qb->andWhere('product.name LIKE :search');    
+            }
+            $qb->setParameter('search', "%$search%");
+
+        }
+
+        // If saleNoticeDate is set
+        if($saleNoticeDate){
+            $qb->andWhere('product.saleNoticeDate > :date')
+                ->setParameter('date', $saleNoticeDate);
+        }
+
+        // If a maximum Price is set
+        if($maxPrice) {
+            $qb->andWhere('product.price < :expr')
+                ->setParameter('expr', $maxPrice);
+        }
+
+        // Execute request, get result
+        $query = $qb->getQuery();
+        return $query->getResult();
     }
-    */
 }

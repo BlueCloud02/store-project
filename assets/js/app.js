@@ -11,12 +11,17 @@ import '@fortawesome/fontawesome-free/js/all.js';
 // Initialization, then to define ajax route
 const page = window.page;
 
+// Ajax call
 function ajaxCall(params){
 	$.get( 
-		page.routes.ajaxSearch,
-		params.toString(),
-		function (data){
-			// TO FILL
+		page.routes.ajaxSearch, // send to ajaxSearchAction into StoreController
+		params.toString(), 
+		function (filteredProducts){
+			$('#productsList li').empty(); // remove former products and add the new ones:
+			for (let i in filteredProducts){
+				let product = filteredProducts[i];
+				$('#productsList').append('<li class="mb-2" productId='+ product.id +'><p class="h3">'+ product.name +'</p><i>'+ product.reference +' - '+ product.price +'€ - '+ product.saleNoticeDate +' - '+ product.brand +'</i></li>');
+			}
 		},
 		'json'
 	);
@@ -28,16 +33,23 @@ $(document).ready(function() {
 	let url = window.location.search;
 	let params = new URLSearchParams(url);
 
+	// SEARCH
 	$('#searchButton').click(function(){
 		params.set("search",$('#search').val());
 		ajaxCall(params);
 	});
 
-	$('#minPrice').change(function(){
-		params.set("minPrice", this.value);
+	// FILTER: Maximum Price 
+	$('#maxPrice').change(function(){
+		params.set("maxPrice", this.value);
 		ajaxCall(params);
 	});
+	// to delete the filter value
+	$('#maxPriceValue i').click(function(){
+		params.delete("maxPrice");
+	});
 
+	// FILTER: Brands
 	$('#brands :checkbox').change(function(){
 		let brands;
 		if(params.has("brands")){
@@ -51,16 +63,15 @@ $(document).ready(function() {
 			let newBrands = brands;
 			newBrands.push(this.value);
 			newDisplayedBrands = newBrands;
-			console.log(newDisplayedBrands);
 		} else {
 			let index = this.value;
 			newDisplayedBrands = brands.filter(brand => brand != index);
-			console.log(newDisplayedBrands);
 		}
 		params.set("brands", JSON.stringify(newDisplayedBrands));
 		ajaxCall(params);
 	});
 
+	// FILTER: "After" this Sale Notice Date
 	$('#saleNoticeDate').change(function(){
 		params.set("saleNoticeDate", this.value);
 		ajaxCall(params);

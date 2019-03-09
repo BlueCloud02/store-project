@@ -36,8 +36,35 @@ class StoreController extends AbstractController {
      * @Route("/ajax", name="store_ajaxSearch")
      */
 	public function ajaxSearchAction(Request $request) {
-		$response = $request->query->all();
+		$getParams = $request->query;
         
+        $em = $this->getDoctrine()->getManager();
+        /** @var ProductRepository $productRepo */
+        $productRepo = $em->getRepository(Product::class);
+		
+		/** @var Product[] $filteredProducts */
+        $filteredProducts = $productRepo->filterProducts(
+        	$getParams->get("search"),
+        	json_decode($getParams->get("brands")), 
+        	$getParams->get("saleNoticeDate") ? date("Y-m-d", strtotime($getParams->get("saleNoticeDate"))) : null, 
+        	$getParams->get("maxPrice")
+        );
+		
+
+        // Serialize products
+        $response = array_map(function (array $row){
+            /** @var Product $product */
+            $product = $row['productEntity'];
+            return [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'reference' => $product->getReference(),
+                'price' => $product->getPrice(),
+                'saleNoticeDate' => $product->getSaleNoticeDate()->format('d-m-y'),
+                'brand' => $product->getBrand()->getName()
+            ];
+        }, $filteredProducts);
+
         return $this->json($response);
     }
 }

@@ -1,9 +1,13 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Catalogue{% endblock %}
+
 {% block body %}
 <div class="container">
     <div class="row mb-3"><div class="col-md-12">
-    	<p class="h1 text-center">Boutique</p>
+    	<!-- Title -->
+    	<p class="h1 text-center">Catalogue</p>
+    	<!-- Search bar -->
     	<div class="input-group">
 		    <input type="text" class="form-control" placeholder="Rechercher" name="search" id="search">
 		    <div class="input-group-btn">
@@ -14,34 +18,39 @@
   		</div>
     </div></div>
     <div class="row">
+    	<!-- List of products -->
     	<div class="col-md-8">
-    		<ul class="list-unstyled">
+    		<ul class="list-unstyled" id='productsList'>
 			    {% for product in products %}
-			    	<li class="mb-2">
+			    	<li class="mb-2" productId={{ product.id }}>
 			    		<p class="h3">{{ product.name }}</p>
 			    		<i>{{ product.reference }} - {{ product.price }}€ - {{ product.saleNoticeDate|date('d/m/Y') }} - {{ product.brand.name }}</i>
 			    	</li>
 			    {% endfor %}
 			</ul>
     	</div>
+    	<!-- More filters -->
     	<div class="col-md-4"><div class="container-fluid">
     		<div class="row">
     			<div class="col-md-12">
     				<h2>Plus de filtres</h2>
     			</div>
 	    	</div>
+	    	<!-- after this saleNoticeDate -->
 	    	<div class="row">
 	    		<div class="col-md-6"><label> Date de mise en vente ultérieure à </label></div>
 	    		<div class="col-md-6">
 	    		 <input type="date" name="saleNoticeDate" id="saleNoticeDate">
 	    		</div>
 	    	</div>
+	    	<!-- Maximum Price -->
 	    	<div class="row">
 	    		<div class="col-md-6"><label> Prix maximal </label></div>
 	    		<div class="col-md-6">
-	    		 <input type="range" name="minPrice" max="500" min="0" step="10" id="minPrice">
+	    		 <input type="range" name="maxPrice" max="500" min="0" step="10" id="maxPrice"> 
 	    		</div>
 	    	</div>
+	    	<!-- Brands -->
 	    	<div class="row" id="brands">
 	    		<div class="col-md-6"><label> Marques </label></div>
 	    		<div class="col-md-6">
