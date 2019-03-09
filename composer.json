@@ -16,6 +16,7 @@
         "symfony/orm-pack": "^1.0",
         "symfony/requirements-checker": "^1.1",
         "symfony/twig-bundle": "4.2.*",
+        "symfony/webpack-encore-bundle": "^1.2",
         "symfony/yaml": "4.2.*"
     },
     "config": {
