@@ -4,6 +4,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Brand;
 use App\Entity\Product;
 
@@ -28,6 +29,16 @@ class StoreController extends AbstractController {
             'products' => $products,
             'brands' => $brands
         ]);
+    }
+
+    /**
+     *
+     * @Route("/ajax", name="store_ajaxSearch")
+     */
+	public function ajaxSearchAction(Request $request) {
+		$response = $request->query->all();
+        
+        return $this->json($response);
     }
 }
 ?>

@@ -5,11 +5,11 @@
     <div class="row mb-3"><div class="col-md-12">
     	<p class="h1 text-center">Boutique</p>
     	<div class="input-group">
-		    <input type="text" class="form-control" placeholder="Rechercher" name="search">
+		    <input type="text" class="form-control" placeholder="Rechercher" name="search" id="search">
 		    <div class="input-group-btn">
-		      <button class="btn btn-default" type="submit">
-		        <i class="fas fa-search"></i>
-		      </button>
+				<button class="btn btn-default" type="submit" id="searchButton">
+					<i class="fas fa-search"></i>
+				</button>
 		    </div>
   		</div>
     </div></div>
@@ -33,16 +33,16 @@
 	    	<div class="row">
 	    		<div class="col-md-6"><label> Date de mise en vente ultérieure à </label></div>
 	    		<div class="col-md-6">
-	    		 <input type="date" name="saleNoticeDate">
+	    		 <input type="date" name="saleNoticeDate" id="saleNoticeDate">
 	    		</div>
 	    	</div>
 	    	<div class="row">
 	    		<div class="col-md-6"><label> Prix maximal </label></div>
 	    		<div class="col-md-6">
-	    		 <input type="range" name="minPrice" max="500" min="0" step="10">
+	    		 <input type="range" name="minPrice" max="500" min="0" step="10" id="minPrice">
 	    		</div>
 	    	</div>
-	    	<div class="row">
+	    	<div class="row" id="brands">
 	    		<div class="col-md-6"><label> Marques </label></div>
 	    		<div class="col-md-6">
 			    	{% for brand in brands %}
@@ -57,7 +57,12 @@
     	</div></div>
     </div>
 </div>
-    
-    
-    
+
+<script>
+    window.page = {
+        routes: {
+            ajaxSearch: '{{ path('store_ajaxSearch') }}'
+        }
+    };
+</script>
 {% endblock %}
