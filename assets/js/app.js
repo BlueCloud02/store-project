@@ -38,15 +38,27 @@ $(document).ready(function() {
 		params.set("search",$('#search').val());
 		ajaxCall(params);
 	});
+	$(document).on('keyup', function(e){
+		if(e.which == 13 && $('#search').is(':focus')) {
+			params.set("search",$('#search').val());
+			ajaxCall(params);
+		}
+	});
 
 	// FILTER: Maximum Price 
 	$('#maxPrice').change(function(){
+		$("#maxPriceValue span:first").text(this.value);
+		$("#maxPriceValue").removeClass('d-none');
+		
 		params.set("maxPrice", this.value);
 		ajaxCall(params);
 	});
 	// to delete the filter value
-	$('#maxPriceValue i').click(function(){
+	$('#maxPriceValue').click(function(){
+		$("#maxPriceValue").addClass('d-none');
+
 		params.delete("maxPrice");
+		ajaxCall(params);
 	});
 
 	// FILTER: Brands
