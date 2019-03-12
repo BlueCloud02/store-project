@@ -19,3 +19,13 @@ input[type="range"]:after {
     right: 0em;
     content: attr(max);
 }
+
+/* Buttons actions styling */
+#pagination a {
+	cursor: pointer;
+}
+
+#maxPriceValue svg:hover  {
+	color: #17a2b8;
+	cursor: pointer;
+}
