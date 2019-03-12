@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+
 
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,10 +21,13 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function filterProducts(?string $search, ?array $brandsIds, ?string $saleNoticeDate, ?int $maxPrice)
+    /**
+     * Get the paginated list of products corresponding to the filters
+     *
+     */
+    public function getFilteredProducts(int $page = 1, int $nbPerPage = 10, ?string $search, ?array $brandsIds, ?string $saleNoticeDate, ?int $maxPrice)
     {
         $qb = $this->createQueryBuilder('product');
-        $qb->select('product as productEntity');
         
         // If some brands are selected 
         if($brandsIds){
@@ -54,8 +59,12 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('expr', $maxPrice);
         }
 
-        // Execute request, get result
+        $qb->orderBy('product.id');
+
+        // Execute request, get paginated result (10 products per page)
         $query = $qb->getQuery();
-        return $query->getResult();
+        $query->setFirstResult(($page-1)* $nbPerPage )
+            ->setMaxResults($nbPerPage);
+        return new Paginator($query, true);
     }
 }
