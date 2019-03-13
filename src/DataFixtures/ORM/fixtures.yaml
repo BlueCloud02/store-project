@@ -1,11 +1,11 @@
 App\Entity\Brand:
-  brand_{1..20}:
+  brand_{1..10}:
     name: 'Marque <current()>'
     
 App\Entity\Product:
   product_{1..50}:
     reference (unique): '#<current()><numberBetween(1000000,9999999)>'
-    name: 'Product <current()>'
+    name: 'Produit <current()>'
     price: <numberBetween(0, 500)>
     brand: '@brand*'
     saleNoticeDate: <dateTimeBetween("-200days", "+200days")>
