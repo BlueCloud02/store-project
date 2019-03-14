@@ -22,6 +22,7 @@ final class Version20190309064818 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('ALTER TABLE product ADD brand INT NOT NULL');
         $this->addSql('ALTER TABLE product ADD CONSTRAINT FK_D34A04AD1C52F958 FOREIGN KEY (brand) REFERENCES brand (brand_id)');
         $this->addSql('CREATE INDEX IDX_D34A04AD1C52F958 ON product (brand)');
     }
@@ -33,5 +34,6 @@ final class Version20190309064818 extends AbstractMigration
 
         $this->addSql('ALTER TABLE product DROP FOREIGN KEY FK_D34A04AD1C52F958');
         $this->addSql('DROP INDEX IDX_D34A04AD1C52F958 ON product');
+        $this->addSql('ALTER TABLE product DROP brand');
     }
 }
