@@ -42,7 +42,6 @@ function ajaxCall(params){
 						let p = Number(i)+1;
 						$('.pagination').append('<li class="page-item"><a class="page-link">'+ p +'</a></li>');
 						if (p == params.get("page")){					
-							console.log(p);
 							$("#pagination li:eq("+ parseInt(i) +")").addClass('active');
 						}
 					}
@@ -53,28 +52,51 @@ function ajaxCall(params){
 	);
 	// Modify URL
 	let lastCharachter = window.location.pathname.slice(-1);
-	window.history.replaceState({}, '', 'store?' + params.toString());	
+	window.history.pushState({}, '', 'store?' + params.toString());	
+}
+
+/* ---------- "HYDRATE" FILTERS if params are already not null ---------- */
+function hydrateSearchAndFilter(params){
+	$("#search").val(params.get("search"));
+	
+	if(params.get("maxPrice") !== null){
+		$("#maxPrice").val(params.get("maxPrice"));
+		$("#maxPriceValue span:first").text(params.get('maxPrice'));
+		$("#maxPriceValue").removeClass('d-none');
+	} else {
+		$("#maxPriceValue").addClass('d-none');
+	}
+
+	$("#saleNoticeDate").val(params.get("saleNoticeDate"));
+	
+	let brands = JSON.parse(params.get("brands"));
+	$("#brands input[type=checkbox]").each(function() {
+		$(this).prop("checked", false);
+	});
+	for(let i in brands){
+		$("#brands input[type=checkbox][value="+ brands[i] +"]").prop("checked", true);
+	}
 }
 
 $(document).ready(function() {
 	let url = window.location.search;
 	let params = new URLSearchParams(url);
 
-	/* ---------- "HYDRATE" FILTERS if params are already not null ---------- */
-	$("#search").val(params.get("search"));
-	
-	if(params.has("maxPrice")){
-		$("#maxPrice").val(params.get("maxPrice"));
-		$("#maxPriceValue span:first").text(params.get('maxPrice'));
-		$("#maxPriceValue").removeClass('d-none');
-	}
-
-	$("#saleNoticeDate").val(params.get("saleNoticeDate"));
-	
-	let brands = JSON.parse(params.get("brands"));
-	for(let i in brands){
-		$("#brands input[type=checkbox][value="+ brands[i] +"]").prop("checked", true);
-	}
+	hydrateSearchAndFilter(params);
+	$(window).on('popstate', function(event) {
+		let newParams = new URLSearchParams(event.target.location.search);
+ 		
+ 		hydrateSearchAndFilter(newParams);
+ 		
+ 		ajaxCall(newParams);
+ 		
+ 		// Brands params has to be changed, because if the filter is changed, brands param is modified from the former one
+ 		if (! newParams.has("brands")){
+ 			params.delete("brands");
+		} else {
+			params.set("brands", newParams.get("brands"));
+		};
+	});
 
 	/* ---------------- FILTERS, SEARCH & PAGINATION --------------- */
 	// Change GET parameters depending on filter that has been changed

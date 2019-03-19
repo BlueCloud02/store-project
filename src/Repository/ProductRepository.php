@@ -29,12 +29,7 @@ class ProductRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('product');
         $qb->leftJoin('product.brand', 'brand');
-        
-        // If some brands are selected 
-        if($brandsIds){
-            $qb->where('brand.id IN (:ids)')
-                ->setParameter('ids', $brandsIds);
-        }
+    
 
         // If search bar is not empty
         if ($search) {
@@ -55,8 +50,8 @@ class ProductRepository extends ServiceEntityRepository
             } 
             // ELSE: search by name or brand
             else {
-                $qb->andWhere('product.name LIKE :search');
-                $qb->andWhere('brand.name LIKE :search');    
+                $qb->andWhere('product.name LIKE :search')
+                    ->orWhere('brand.name LIKE :search');
                 $qb->setParameter('search', "%$search%");
             }
 
@@ -69,9 +64,15 @@ class ProductRepository extends ServiceEntityRepository
         }
 
         // If a maximum Price is set
-        if($maxPrice) {
+        if(isset($maxPrice)) {
             $qb->andWhere('product.price < :expr')
                 ->setParameter('expr', $maxPrice);
+        }
+
+        // If some brands are selected 
+        if($brandsIds){
+            $qb->andWhere('brand.id IN (:ids)')
+                ->setParameter('ids', $brandsIds);
         }
 
         $qb->orderBy('product.id');
